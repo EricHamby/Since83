@@ -2,16 +2,16 @@
 // These setting will work on any theme made by Eric Hamby. 
 // If you change from one theme to another your options will continue to the next theme.
 function eh_admin_init() {
-//Style Options  
+//Style Options	
 	register_setting('style', 'eh_theme_style'); //moviebits
-	register_setting('style', 'eh_theme_logo'); //phoenix
+	register_setting('style', 'eh_theme_logo'); //phoenix|moviebits
 //SEO Options	
 	register_setting('seo', 'eh_meta_description'); //phoenix|moviebits
 	register_setting('seo', 'eh_meta_keywords'); //phoenix|moviebits
 	register_setting('seo', 'eh_meta_copyright'); //phoenix|moviebits
 //Social Options
-	register_setting('social', 'eh_social_facebook'); //phoenix
-	register_setting('social', 'eh_social_twitter'); //phoenix	
+	register_setting('social', 'eh_social_facebook'); //phoenix|moviebits
+	register_setting('social', 'eh_social_twitter'); //phoenix|moviebits	
 //Text Options	
 	register_setting('text', 'eh_footer_copyright'); //phoenix|moviebits
 	register_setting('text', 'eh_errorpage_text'); //phoenix|moviebits
