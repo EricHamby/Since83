@@ -1,7 +1,7 @@
 <?php 
 /* Gets theme information which is used throughout the files */
 function get_name_eh(){
-  global $themename;
+	global $themename;
 	$theme_data = implode('', file(ABSPATH."/wp-content/themes/".$themename."/style.css"));
 	if (preg_match("|Theme Name:(.*)|i", $theme_data, $name)) {
 		$name = $name[1];
@@ -34,10 +34,8 @@ function get_type_eh(){
 } 
 function get_framework_eh(){
 	global $themename;
-	$theme_data = implode('', file(ABSPATH."/wp-content/themes/".$themename."/style.css"));
-	if (preg_match("|Framework:(.*)|i", $theme_data, $framework)) {
-		$framework = $framework[1];
-	}
+	 $file_path = (ABSPATH."/wp-content/themes/".$themename."/admin/theme_array.php"); 
+     echo date ("F d Y",filemtime($file_path)); 
 	return $framework;
 } 
 function get_release_eh(){
