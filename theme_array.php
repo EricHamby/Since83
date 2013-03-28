@@ -24,7 +24,7 @@ function eh_admin_init() {
 	register_setting('modules', 'eh_ie8_style'); //
 	register_setting('modules', 'eh_ie9_style'); //
 	register_setting('modules', 'eh_google_stats'); //phoenix|moviebits
-	register_setting('modules', 'eh_menu_disc'); //
+	register_setting('modules', 'eh_menu_disc'); //moviebits
 	register_setting('modules', 'eh_site_favicon'); //phoenix|moviebits
 //Module Options	
 	register_setting('module_settings', 'eh_google_code'); //phoenix|moviebits
