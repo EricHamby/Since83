@@ -16,7 +16,7 @@ function eh_admin_init() {
 	register_setting('text', 'eh_footer_copyright'); //phoenix|moviebits
 	register_setting('text', 'eh_errorpage_text'); //phoenix|moviebits
 //Modules	
-	register_setting('modules', 'eh_auto_pages'); //phoenix
+	register_setting('modules', 'eh_auto_pages'); //
 	register_setting('modules', 'eh_default_avatars'); //phoenix|moviebits
 	register_setting('modules', 'eh_rss_widget'); //phoenix|moviebits
 	register_setting('modules', 'eh_ie6_style'); //
