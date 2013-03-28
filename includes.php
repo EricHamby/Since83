@@ -225,6 +225,11 @@ global $itsayes; global $itsano; global $absolutepath;
                 <td><?php $filename = $absolutepath.'/module/ie_module_eight.php';
                             if (url_exists($filename)){ echo $itsayes; } else { echo $itsano;} ?></td>
               </tr>
+              <tr class="alternate">
+                <td><strong>IE9 Style:</strong></td>
+                <td><?php $filename = $absolutepath.'/module/ie_module_nine.php';
+                            if (url_exists($filename)){ echo $itsayes; } else { echo $itsano;} ?></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -282,6 +287,11 @@ global $itsayes; global $itsano; global $absolutepath;
               <td><strong>IE<em>8</em> Style Support:</strong></td>
               <td><input name="eh_ie8_style" value="true" type="checkbox"<?php checked("true", get_option("eh_ie8_style")); ?> 
 <?php $filename = $absolutepath.'/module/ie_module_eight.php'; if (!url_exists($filename)){ echo 'disabled';} ?>/></td>
+            </tr>
+            <tr class="alternate">
+              <td><strong>IE<em>9</em> Style Support:</strong></td>
+              <td><input name="eh_ie9_style" value="true" type="checkbox"<?php checked("true", get_option("eh_ie9_style")); ?> 
+<?php $filename = $absolutepath.'/module/ie_module_nine.php'; if (!url_exists($filename)){ echo 'disabled';} ?>/></td>
             </tr>
             <?php eh_table_stop();?>
           </div>
