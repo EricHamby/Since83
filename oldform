@@ -1,0 +1,229 @@
+<?php //START FeE (Front-end Editor) SCRIPT BY CARTPAUJ
+//v1.4 Added tag firld and ability to exclude categories
+//v1.3 - Changed code for WP v3.1 functions
+//v1.2 - Added image URL field
+//v1.1 - Re styled forms
+//v1.0 - First release
+add_shortcode('feEditor', 'feEDoShortcode');
+//WHERE ALL THE MAGIC HAPPENS
+function feEDoShortcode()
+{
+  global $wp_rewrite, $user_ID;
+	$cats = feEGetCats();
+	ob_start();
+	//CHECK IF SAVING
+	if(isset($_POST['feESavePost']) && !empty($_POST['feESavePost']))
+	{
+		//VALIDATE BEFORE SAVING
+		$errors = feEValidate();
+		if(empty($errors))
+		{
+			//IF NO ERRORS THEN CREATE POST
+			$newPost = wp_insert_post(feEPublishPost());
+			if($newPost)
+			{
+				//ADD CUSTOM FIELD(S)
+				feEAddPostMeta($newPost);
+				//ATTACH IMAGE IF ONE WAS UPLOADED
+				feEAttachImage($newPost);
+				echo "
+
+<div class='alert alert_green'>
+								<img height='24' width='24' src='../wp-content/themes/presstistix/images/icons/small/white/Alert.png'>
+Your post was successfully submitted! -"." (<a href='".get_permalink($newPost)."'>View Post</a>)
+								</div>
+				
+				";
+			}
+			else
+				echo "<div class='alert alert_red'>
+								<img height='24' width='24' src='../wp-content/themes/presstistix/images/icons/small/white/Alarm%20Bell.png'>
+An unknown error has occurred!
+								</div>";
+		}
+		else
+		{
+			//SHOW ERRORS
+			foreach($errors as $e)
+				echo "
+				<div class='alert alert_red'>
+								<img height='24' width='24' src='../wp-content/themes/presstistix/images/icons/small/white/Alarm%20Bell.png'>
+".$e."
+								</div>";
+			//SHOW FORM WITH ANY ENTERED DATA STILL AVAILABLE
+			feEShowForm($cats);
+		}
+	}
+	else
+	{
+		//IF NOT SAVING THEN JUST SHOW EMPTY FORM
+		feEShowForm($cats);
+	}
+	//RETURN THE FINAL OUTPUT
+	return ob_get_clean();
+}
+function feEPublishPost()
+{
+    global $user_ID;
+    //CREATE THE POST ARRAY TO BE PASSED TO THE WP INSERT POST FUNC
+    $post = array();
+    $post['post_type'] = 'post';
+    $post['post_title'] = stripslashes($_POST['feETitle']);
+    //PULLS IN AUTHOR NAME HERE AS WELL
+    $post['post_content'] = "Author: ".stripslashes($_POST['feEName'])."<br/>".stripslashes($_POST['feEContent']);
+    $post['post_author'] = ($user_ID)?$user_ID:1;
+    $post['post_category'] = array($_POST['feECategory']);
+    $post['post_status'] = 'publish';
+	$post['tags_input'] = stripslashes($_POST['feETags']);
+    return $post;
+}
+function feEShowForm($cats)
+{
+	?>
+
+<form class="feESubmissionForm" action="" method="POST" name="feESubmissionForm" enctype="multipart/form-data">
+  <div class="fields">
+    <p class="sep">
+    <h2>Website</h2>
+    <input type="text" name="feETitle" id="feETitle" class="large" title="Website URL" value="<?php echo stripslashes($_POST['feETitle']); ?>" />
+    <div class="alert alert_navy"> <img height="24" width="24" src="<?php bloginfo('template_directory'); ?>/images/icons/small/white/Cog%203.png"> Do not add <strong>www.</strong> or <strong>http://</strong> (WordPress.Com) </div>
+    </p>
+
+    <!-- Get Post Category --> 
+    <!--     <p class="sep">
+      <label class="small" for="feECategory">Category</label>
+      <select name="feECategory" id="feECategory" class="sSelect">
+        <?php
+			foreach($cats as $cat)
+			{
+				if($_POST['feECategory'] == $cat->cat_ID)
+					echo "<option value='{$cat->cat_ID}' selected='selected'>{$cat->name}</option>";
+				else
+					echo "<option value='{$cat->cat_ID}'>{$cat->name}</option>";
+			}
+			?>
+      </select>
+    </p>--> 
+    
+    <!-- Get Post Content -->
+    <div class="fields">
+      <h2>Your Description</h2>
+      <textarea name="feEContent" id="feEContent" cols="78" rows="10" title="A few words about the website." class="wysiwyg sTextarea"><?php echo stripslashes($_POST['feEContent']); ?></textarea>
+    </div>
+    
+    <!-- Get URL for CUSTOM FIELD --> 
+    <!--    <div class="fields">
+      <h2>Download Links</h2>
+      <textarea name="feEURL" id="feEURL" cols="78" rows="10" class="wysiwyg sTextarea"><?php echo stripslashes($_POST['feEURL']); ?></textarea>
+    </div>-->
+
+	<div class="fields">
+		<h2>Tags</h2>
+		<input type="text" name="feETags" id="feETags" class="large" value="<?php echo stripslashes($_POST['feETags']); ?>" />
+	</div>
+    
+    <?php if ( !get_option('auto_thumbs') ) : ?>
+    <!-- Get An Image To Be Uploaded -->
+    <div class="fields">
+      <h2>Upload Image</h2>
+      <p>
+        <input type="file" name="feEFile" id="feEFile" />
+      </p>
+    </div>
+    <!-- Get An Image URL -->
+    <div class="fields">
+      <h2>Or Use Image URL</h2>
+      <p class="sep">
+        <label for="feEIURL" class="small">Image URL</label>
+        <input type="text" name="feEIURL" id="feEIURL" class="large" value="<?php echo stripslashes($_POST['feETitle']); ?>" />
+      </p>
+    </div>
+    <?php else: ?>
+    <h2>Screenshot</h2>
+    <div class="alert alert_orange">
+								<img height="24" width="24" src="../wp-content/themes/presstistix/images/icons/small/white/Alarm%20Clock.png">
+			Your Website screenshot may take up to <strong>24 hours</strong> to display.
+								</div>
+    <?php endif; ?>
+    <div class="fields">
+      <p class="tright">
+        <input type="submit" name="feESavePost" id="feESavePost" class="butDef" value="Submit Post" />
+      </p>
+    </div>
+    
+    <!-- Show Submit Button --> 
+    
+  </div>
+</form>
+<?php
+}
+function feEValidate()
+{
+	//CREATE AN EMPTY ARRAY AND ADD ERROR STRINGS TO IT IF ERRORS ARE FOUND
+	$errors = array();
+	if($_FILES["feEFile"]["error"] > 0 && !empty($_FILES["feEFile"]["name"]))
+		$errors[] = "There was an error uploading the image!";
+	if(!empty($_FILES["feEFile"]["name"]))
+	{
+		$ext = strtolower(feEGetExt(stripslashes($_FILES["feEFile"]["name"])));
+		if($ext != "jpg" && $ext != "jpeg" && $ext != "bmp" && $ext != "png" && $ext != "gif")
+			$errors[] = "File must be a valid image type!";
+	}
+	if(empty($_POST['feETitle']))
+		$errors[] = "Please enter a post title!";
+	if(empty($_POST['feEContent']))
+		$errors[] = "Post content cannot be blank!";
+	return $errors;
+}
+function feEGetCats()
+{
+	//RETURN A LIST OF CATS
+	$args = array(	'type'			=> 'post',
+					'hide_empty'	=> 0,
+					'exclude'		=> "" //List of Cat ID's to exclude EX: "0,3,7"
+	);
+	return get_categories($args);
+}
+function feEGetExt($str)
+{
+	//GETS THE FILE EXTENSION BELONGING TO THE UPLOADED FILE
+	$i = strrpos($str,".");
+	if (!$i) { return ""; }
+	$l = strlen($str) - $i;
+	$ext = substr($str,$i+1,$l);
+	return $ext;
+}
+function feEAddPostMeta($pid)
+{
+	//CREATE THE KEY/VALUE PAIR TO BE UPDATED IN THE POST META FOR CUSTOM FIELD(S)
+	$key = "url";
+	$value = stripslashes($_POST['feEURL']);
+	update_post_meta($pid, $key, $value);
+	$key = "iurl";
+	$value = stripslashes($_POST['feEIURL']);
+	update_post_meta($pid, $key, $value);
+}
+function feEAttachImage($pid)
+{
+    //GET USERS UPLOAD PATH
+    $upload_dir = wp_upload_dir();
+    $path = $upload_dir['path']."/";
+	$url = $upload_dir['url']."/"; 
+    //MAKE SURE A FILE WAS UPLOADED BEFORE TRYING TO ATTACH IT
+    if(!empty($_FILES["feEFile"]["name"]))
+    {
+        require_once(ABSPATH.'wp-admin/includes/image.php'); //MUST INCLUDE FOR wp_generate_attachment_metadata() TO WORK
+        move_uploaded_file($_FILES["feEFile"]["tmp_name"], $path.stripslashes($_FILES["feEFile"]["name"]));
+        $wp_filetype = wp_check_filetype(stripslashes($_FILES["feEFile"]["name"]), null );
+        $attachment = array(    'post_mime_type' => $wp_filetype['type'],
+                                'post_title' => preg_replace('/\.[^.]+$/', '', stripslashes($_FILES["feEFile"]["name"])),
+                                'post_content' => '',
+                                'post_status' => 'inherit');
+        $attachment['guid'] = $url.'/'.stripslashes($_FILES["feEFile"]["name"]);
+        $attach_id = wp_insert_attachment($attachment, $path.stripslashes($_FILES["feEFile"]["name"]), $pid);
+        $attach_data = wp_generate_attachment_metadata($attach_id, $path.stripslashes($_FILES["feEFile"]["name"]));
+        wp_update_attachment_metadata($attach_id,  $attach_data);
+    }
+}
+
+//END FeE (Front-end Editor) SCRIPT BY CARTPAUJ ?>
