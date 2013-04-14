@@ -1,0 +1,42 @@
+add_action('init', 'portfolio_register'); 
+function portfolio_register() {
+ 
+  $labels = array(
+		'name' => _x('User Lists', 'post type general name'),
+		'singular_name' => _x('User List', 'post type singular name'),
+		'add_new' => _x('Add New', 'list item'),
+		'add_new_item' => __('Add New List'),
+		'edit_item' => __('Edit List Item'),
+		'new_item' => __('New List Item'),
+		'view_item' => __('View List Item'),
+		'search_items' => __('Search Lists'),
+		'not_found' =>  __('Nothing found'),
+		'not_found_in_trash' => __('Nothing found in Trash'),
+		'parent_item_colon' => ''
+	);
+ 
+	$args = array(
+    'labels' => $labels,
+    'public' => true, 
+    'publicly_queryable' => true,
+    'show_ui' => true,
+    'query_var' => true,
+    'menu_icon' => get_stylesheet_directory_uri() . '/img/cutleries.png',
+    'rewrite' => true,
+    'capability_type' => 'post',
+    'hierarchical' => false,
+    'show_admin_column' => true,
+    'menu_position' => null,
+	'taxonomies' => array('category', 'post_tag', 'type', 'state'),
+    'supports' => array('title',
+        'editor',
+        'author',
+        'custom-fields',
+        'comments')
+  );
+
+    register_post_type( 'user_lists' , $args ); }
+	
+	register_taxonomy("type", array("user_lists"), array("hierarchical" => true, "label" => "List Types", "singular_label" => "List Type", "rewrite" => true, 'show_admin_column' => true,)); 
+	
+	register_taxonomy("state", array("user_lists"), array("hierarchical" => true, "label" => "List State", "singular_label" => "List State", "rewrite" => true, 'show_admin_column' => true,));
