@@ -1,5 +1,4 @@
 <?php
-//START FeE (Front-end Editor) SCRIPT BY CARTPAUJ
 add_shortcode('feEditor', 'feEDoShortcode');
 add_action('init', 'catch_save_form');
 
@@ -28,7 +27,7 @@ function catch_save_form()
                       'post_category'   => array($_POST['type'], $_POST['state']), // Usable for custom taxonomies too
                       'tags_input'      => stripslashes($tags),
                       'post_status'     => 'publish', // Choose: publish, preview, future, draft, etc.
-                      'post_type'       => 'user_lists' //'post',page' or use a custom post type if you want to
+                      'post_type'       => 'user_lists', //'post',page' or use a custom post type if you want to
     );
 
     //SAVE THE POST
@@ -118,5 +117,4 @@ function erichamby_custom_taxonomy_dropdown( $taxonomy, $orderby = 'date', $orde
 		print( '</select>' );
 	}
 }
-//END FeE (Front-end Editor) SCRIPT BY CARTPAUJ
 ?>
