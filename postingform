@@ -24,7 +24,6 @@ function catch_save_form()
     // ADD THE FORM INPUT TO $new_post ARRAY
     $new_post = array('post_title'      => stripslashes($title),
                       'post_content'    => stripslashes($description),
-                      'post_category'   => array($_POST['type'], $_POST['state']), // Usable for custom taxonomies too
                       'tags_input'      => stripslashes($tags),
                       'post_status'     => 'publish', // Choose: publish, preview, future, draft, etc.
                       'post_type'       => 'user_lists', //'post',page' or use a custom post type if you want to
