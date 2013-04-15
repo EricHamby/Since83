@@ -1,42 +1,124 @@
-add_action('init', 'portfolio_register'); 
-function portfolio_register() {
- 
-  $labels = array(
-		'name' => _x('User Lists', 'post type general name'),
-		'singular_name' => _x('User List', 'post type singular name'),
-		'add_new' => _x('Add New', 'list item'),
-		'add_new_item' => __('Add New List'),
-		'edit_item' => __('Edit List Item'),
-		'new_item' => __('New List Item'),
-		'view_item' => __('View List Item'),
-		'search_items' => __('Search Lists'),
-		'not_found' =>  __('Nothing found'),
-		'not_found_in_trash' => __('Nothing found in Trash'),
-		'parent_item_colon' => ''
-	);
- 
-	$args = array(
-    'labels' => $labels,
-    'public' => true, 
-    'publicly_queryable' => true,
-    'show_ui' => true,
-    'query_var' => true,
-    'menu_icon' => get_stylesheet_directory_uri() . '/img/cutleries.png',
-    'rewrite' => true,
-    'capability_type' => 'post',
-    'hierarchical' => false,
-    'show_admin_column' => true,
-    'menu_position' => null,
-	'taxonomies' => array('category', 'post_tag', 'type', 'state'),
-    'supports' => array('title',
-        'editor',
-        'author',
-        'custom-fields',
-        'comments')
-  );
+<?php
+add_shortcode('feEditor', 'feEDoShortcode');
+add_action('init', 'catch_save_form');
 
-    register_post_type( 'user_lists' , $args ); }
-	
-	register_taxonomy("type", array("user_lists"), array("hierarchical" => true, "label" => "List Types", "singular_label" => "List Type", "rewrite" => true, 'show_admin_column' => true,)); 
-	
-	register_taxonomy("state", array("user_lists"), array("hierarchical" => true, "label" => "List State", "singular_label" => "List State", "rewrite" => true, 'show_admin_column' => true,));
+function catch_save_form()
+{
+  $errors = array();
+  
+  if('POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) &&  $_POST['action'] == "new_post")
+  {
+    // Do some minor form validation to make sure there is content
+    if(isset ($_POST['title']))
+      $title =  $_POST['title'];
+    else
+      $errors[] = 'Please enter the wine name';
+
+    if(isset ($_POST['description']))
+      $description = $_POST['description'];
+    else
+      $errors[] = 'Please enter some notes';
+
+    $tags = $_POST['post_tags'];
+
+    // ADD THE FORM INPUT TO $new_post ARRAY
+    $new_post = array('post_title'      => stripslashes($title),
+                      'post_content'    => stripslashes($description),
+                      'post_category'   => array($_POST['type'], $_POST['state']), // Usable for custom taxonomies too
+                      'tags_input'      => stripslashes($tags),
+                      'post_status'     => 'publish', // Choose: publish, preview, future, draft, etc.
+                      'post_type'       => 'user_lists', //'post',page' or use a custom post type if you want to
+					  'tax_input'    => array(
+        'list_type'  => $_POST['list_type'],
+        'list_state' => $_POST['list_state'],
+    )
+    );
+
+    //SAVE THE POST
+    $pid = wp_insert_post($new_post);
+
+    //REDIRECT TO THE NEW POST ON SAVE
+    $link = get_permalink( $pid );
+    $_POST['form_errors'] = $errors;
+    wp_redirect( $link );
+    die(); 
+  } // END THE IF STATEMENT
+}
+
+//WHERE ALL THE MAGIC HAPPENS
+function feEDoShortcode()
+{
+  if(isset($_POST['form_errors']) && !empty($_POST['form_errors']))
+    foreach($_POST['form_errors'] as $e)
+      echo '<p class="form_error">ERROR: '.$e.'</p>';
+  ?>
+  <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+    <header class="entry-header">
+      <h1 class="entry-title">Submit Your List!</h1>
+    </header>
+    <div class="entry-content">
+      <form id="new_post" name="new_post" method="post" action="" class="wpcf7-form" enctype="multipart/form-data">
+        <!-- post name -->
+        <fieldset name="name">
+          <label for="title">Wine Name:</label>
+          <input type="text" id="title" value="" tabindex="5" name="title" />
+        </fieldset>
+        
+        <!-- post Category -->
+        <fieldset class="category">
+          <label for="cat">Select List Type:</label>
+          <?php erichamby_custom_taxonomy_dropdown( 'list_type', 'date', 'DESC', '10', 'list_type', '', '', 'Select One' ); ?>
+          <?php erichamby_custom_taxonomy_dropdown( 'list_state', 'date', 'DESC', '10', 'list_state', '', '', 'Select One' ); ?>
+        </fieldset>
+        
+        <!-- post Content -->
+        <fieldset class="content">
+          <label for="description">Description and Notes:</label>
+          <?php wp_editor("", 'description', array('media_buttons' => true, )); //change media_buttons to true to allow images/videos/music ?>
+        </fieldset>
+        
+        <!-- post tags -->
+        <fieldset class="tags">
+          <label for="post_tags">Additional Keywords (comma separated):</label>
+          <input type="text" value="" tabindex="35" name="post_tags" id="post_tags" />
+        </fieldset>
+        <fieldset class="submit">
+          <input type="submit" value="Post Review" tabindex="40" id="submit" name="submit" />
+        </fieldset>
+        <input type="hidden" name="action" value="new_post" />
+        <?php wp_nonce_field( 'new-post' ); ?>
+      </form>
+    </div>
+    <!-- .entry-content --> 
+  </article>
+  <!-- #post -->
+  <?php
+}
+
+function erichamby_custom_taxonomy_dropdown( $taxonomy, $orderby = 'date', $order = 'DESC', $limit = '-1', $name, $show_option_all = null, $show_option_none = null, $show_option_select = null ) {
+	$args = array(
+		'orderby' => $orderby,
+		'order' => $order,
+		'number' => $limit,
+		'hide_empty' => 0,
+	);
+	$terms = get_terms( $taxonomy, $args );
+	$name = ( $name ) ? $name : $taxonomy;
+	if ( $terms ) {
+		printf( '<select name="%s" class="postform">', $name );
+		if ( $show_option_select ) {
+			printf( '<option>%s</option>', $show_option_select );
+		}
+		if ( $show_option_all ) {
+			printf( '<option value="0">%s</option>', $show_option_all );
+		}
+		if ( $show_option_none ) {
+			printf( '<option value="-1">%s</option>', $show_option_none );
+		}
+		foreach ( $terms as $term ) {
+			printf( '<option value="%s">%s</option>', $term->slug, $term->name );
+		}
+		print( '</select>' );
+	}
+}
+?>
