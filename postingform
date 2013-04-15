@@ -28,6 +28,10 @@ function catch_save_form()
                       'tags_input'      => stripslashes($tags),
                       'post_status'     => 'publish', // Choose: publish, preview, future, draft, etc.
                       'post_type'       => 'user_lists', //'post',page' or use a custom post type if you want to
+					  'tax_input'    => array(
+        'list_type'  => $_POST['list_type'],
+        'list_state' => $_POST['list_state'],
+    )
     );
 
     //SAVE THE POST
@@ -63,8 +67,8 @@ function feEDoShortcode()
         <!-- post Category -->
         <fieldset class="category">
           <label for="cat">Select List Type:</label>
-          <?php erichamby_custom_taxonomy_dropdown( 'type', 'date', 'DESC', '10', 'type', '', '', 'Select One' ); ?>
-          <?php erichamby_custom_taxonomy_dropdown( 'state', 'date', 'DESC', '10', 'state', '', '', 'Select One' ); ?>
+          <?php erichamby_custom_taxonomy_dropdown( 'list_type', 'date', 'DESC', '10', 'list_type', '', '', 'Select One' ); ?>
+          <?php erichamby_custom_taxonomy_dropdown( 'list_state', 'date', 'DESC', '10', 'list_state', '', '', 'Select One' ); ?>
         </fieldset>
         
         <!-- post Content -->
