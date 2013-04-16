@@ -1,4 +1,5 @@
 <?php
+//START FeE (Front-end Editor) SCRIPT BY CARTPAUJ
 add_shortcode('feEditor', 'feEDoShortcode');
 add_action('init', 'catch_save_form');
 
@@ -28,8 +29,8 @@ function catch_save_form()
                       'post_status'     => 'publish', // Choose: publish, preview, future, draft, etc.
                       'post_type'       => 'user_lists', //'post',page' or use a custom post type if you want to
 					  'tax_input'    => array(
-        'list_type'  => $_POST['list_type'],
-        'list_state' => $_POST['list_state'],
+                        'list_type'  => $_POST['list_type'],
+                        'list_state' => $_POST['list_state'],
     )
     );
 
@@ -51,47 +52,54 @@ function feEDoShortcode()
     foreach($_POST['form_errors'] as $e)
       echo '<p class="form_error">ERROR: '.$e.'</p>';
   ?>
-  <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-    <header class="entry-header">
-      <h1 class="entry-title">Submit Your List!</h1>
-    </header>
-    <div class="entry-content">
-      <form id="new_post" name="new_post" method="post" action="" class="wpcf7-form" enctype="multipart/form-data">
-        <!-- post name -->
-        <fieldset name="name">
-          <label for="title">Wine Name:</label>
-          <input type="text" id="title" value="" tabindex="5" name="title" />
-        </fieldset>
-        
-        <!-- post Category -->
-        <fieldset class="category">
-          <label for="cat">Select List Type:</label>
-          <?php erichamby_custom_taxonomy_dropdown( 'list_type', 'date', 'DESC', '10', 'list_type', '', '', 'Select One' ); ?>
-          <?php erichamby_custom_taxonomy_dropdown( 'list_state', 'date', 'DESC', '10', 'list_state', '', '', 'Select One' ); ?>
-        </fieldset>
-        
-        <!-- post Content -->
-        <fieldset class="content">
-          <label for="description">Description and Notes:</label>
-          <?php wp_editor("", 'description', array('media_buttons' => true, )); //change media_buttons to true to allow images/videos/music ?>
-        </fieldset>
-        
-        <!-- post tags -->
-        <fieldset class="tags">
-          <label for="post_tags">Additional Keywords (comma separated):</label>
-          <input type="text" value="" tabindex="35" name="post_tags" id="post_tags" />
-        </fieldset>
-        <fieldset class="submit">
-          <input type="submit" value="Post Review" tabindex="40" id="submit" name="submit" />
-        </fieldset>
-        <input type="hidden" name="action" value="new_post" />
-        <?php wp_nonce_field( 'new-post' ); ?>
-      </form>
-    </div>
-    <!-- .entry-content --> 
-  </article>
-  <!-- #post -->
-  <?php
+
+<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+  <header class="entry-header">
+    <h1 class="entry-title">Submit Your List!</h1>
+  </header>
+  <div class="entry-content">
+    <form id="new_post" name="new_post" method="post" action="" class="wpcf7-form" enctype="multipart/form-data">
+      <!-- post name -->
+      <fieldset name="name">
+        <label for="title">Wine Name:</label>
+        <input type="text" id="title" value="" tabindex="5" name="title" />
+      </fieldset>
+      
+      <!-- post Category -->
+      <fieldset class="category">
+        <label for="cat">Select List Type:</label>
+        <?php erichamby_custom_taxonomy_dropdown( 'list_type', 'date', 'DESC', '10', 'list_type', '', '', 'Select One' ); ?>
+        <?php erichamby_custom_taxonomy_dropdown( 'list_state', 'date', 'DESC', '10', 'list_state', '', '', 'Select One' ); ?>
+      </fieldset>
+      
+      <!-- post Category -->
+	<fieldset class="category">
+		<label for="cat">Type:</label>
+		<?php wp_dropdown_categories( 'tab_index=10&taxonomy=list_type&hide_empty=0' ); ?>
+	</fieldset>
+      
+      <!-- post Content -->
+      <fieldset class="content">
+        <label for="description">Description and Notes:</label>
+        <?php wp_editor("", 'description', array('media_buttons' => true, )); //change media_buttons to true to allow images/videos/music ?>
+      </fieldset>
+      
+      <!-- post tags -->
+      <fieldset class="tags">
+        <label for="post_tags">Additional Keywords (comma separated):</label>
+        <input type="text" value="" tabindex="35" name="post_tags" id="post_tags" />
+      </fieldset>
+      <fieldset class="submit">
+        <input type="submit" value="Post Review" tabindex="40" id="submit" name="submit" />
+      </fieldset>
+      <input type="hidden" name="action" value="new_post" />
+      <?php wp_nonce_field( 'new-post' ); ?>
+    </form>
+  </div>
+  <!-- .entry-content --> 
+</article>
+<!-- #post -->
+<?php
 }
 
 function erichamby_custom_taxonomy_dropdown( $taxonomy, $orderby = 'date', $order = 'DESC', $limit = '-1', $name, $show_option_all = null, $show_option_none = null, $show_option_select = null ) {
@@ -120,4 +128,5 @@ function erichamby_custom_taxonomy_dropdown( $taxonomy, $orderby = 'date', $orde
 		print( '</select>' );
 	}
 }
+//END FeE (Front-end Editor) SCRIPT BY CARTPAUJ
 ?>
