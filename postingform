@@ -1,5 +1,5 @@
 <?php
-//START FeE (Front-end Editor) SCRIPT BY CARTPAUJ
+//EricHamby.Com
 add_shortcode('feEditor', 'feEDoShortcode');
 add_action('init', 'catch_save_form');
 
@@ -72,12 +72,6 @@ function feEDoShortcode()
         <?php erichamby_custom_taxonomy_dropdown( 'list_state', 'date', 'DESC', '10', 'list_state', '', '', 'Select One' ); ?>
       </fieldset>
       
-      <!-- post Category -->
-	<fieldset class="category">
-		<label for="cat">Type:</label>
-		<?php wp_dropdown_categories( 'tab_index=10&taxonomy=list_type&hide_empty=0' ); ?>
-	</fieldset>
-      
       <!-- post Content -->
       <fieldset class="content">
         <label for="description">Description and Notes:</label>
@@ -128,5 +122,5 @@ function erichamby_custom_taxonomy_dropdown( $taxonomy, $orderby = 'date', $orde
 		print( '</select>' );
 	}
 }
-//END FeE (Front-end Editor) SCRIPT BY CARTPAUJ
+//EricHamby.Com
 ?>
