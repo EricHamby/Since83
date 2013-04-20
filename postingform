@@ -61,41 +61,46 @@ function feEDoShortcode()
     <form id="new_post" name="new_post" method="post" action="" class="wpcf7-form" enctype="multipart/form-data">
       <!-- post name -->
       <fieldset name="name">
-        <label for="title">Wine Name:</label>
-        <input type="text" id="title" value="" tabindex="5" name="title" />
+        <input type="hidden" id="title" value="<?php echo date('F jS Y h:i:s A'); ?>" tabindex="5" name="title" />
       </fieldset>
       
-      <!-- post Category -->
+      <div class="selects">
+       <div class="selects1">
+      <!-- list type -->
       <fieldset class="category">
-        <label for="cat">Select List Type:</label>
-        <?php erichamby_custom_taxonomy_dropdown( 'list_type', 'date', 'DESC', '10', 'list_type', '', '', 'Select One' ); ?>
-        <?php erichamby_custom_taxonomy_dropdown( 'list_state', 'date', 'DESC', '10', 'list_state', '', '', 'Select One' ); ?>
+        <?php erichamby_custom_taxonomy_dropdown( 'list_type', 'date', 'DESC', '10', 'list_type', '', '', 'Select List Type' ); ?>
       </fieldset>
+       </div><div class="selects2">
+      <!-- list state -->
+      <fieldset class="category">
+        <?php erichamby_custom_taxonomy_dropdown( 'list_state', 'date', 'DESC', '10', 'list_state', '', '', 'Select List State' ); ?>
+      </fieldset>
+      </div></div><div class="clear" ></div>
       
-      <!-- post Content -->
-      <fieldset class="content">
+      <!-- post content -->
+      <fieldset class="content space">
         <label for="description">Description and Notes:</label>
-        <?php wp_editor("", 'description', array('media_buttons' => true, )); //change media_buttons to true to allow images/videos/music ?>
+        <?php wp_editor("", 'description', array('media_buttons' => false, )); //change media_buttons to true to allow images/videos/music ?>
       </fieldset>
       
       <!-- post tags -->
-      <fieldset class="tags">
+      <fieldset class="tags space">
         <label for="post_tags">Additional Keywords (comma separated):</label>
         <input type="text" value="" tabindex="35" name="post_tags" id="post_tags" />
       </fieldset>
-      <fieldset class="submit">
+      
+      <!-- submit -->
+      <fieldset class="submit space">
         <input type="submit" value="Post Review" tabindex="40" id="submit" name="submit" />
       </fieldset>
+      
       <input type="hidden" name="action" value="new_post" />
       <?php wp_nonce_field( 'new-post' ); ?>
     </form>
-  </div>
-  <!-- .entry-content --> 
-</article>
-<!-- #post -->
+  </div><!-- .entry-content --> 
+</article><!-- #post -->
 <?php
 }
-
 function erichamby_custom_taxonomy_dropdown( $taxonomy, $orderby = 'date', $order = 'DESC', $limit = '-1', $name, $show_option_all = null, $show_option_none = null, $show_option_select = null ) {
 	$args = array(
 		'orderby' => $orderby,
