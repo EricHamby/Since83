@@ -1,0 +1,83 @@
+<?php
+// Get user info
+global $current_user, $wp_roles;
+get_currentuserinfo();
+  
+// Load the registration file
+require_once( ABSPATH . WPINC . '/registration.php' );
+require_once( ABSPATH . 'wp-admin/includes' . '/template.php' ); // this is only for the selected() function
+ 
+// If profile was saved, update profile
+if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'update-user' ) {
+ 
+/* Update user information. */
+
+    if ( !empty( $_POST['weburl'] ) )
+        update_user_meta( $current_user->ID, 'weburl', esc_url( $_POST['weburl'] ) );
+    if ( !empty( $_POST['primecity'] ) )
+        update_user_meta( $current_user->ID, 'primecity', esc_attr( $_POST['primecity'] ) );
+    if ( !empty( $_POST['primestate'] ) )
+        update_user_meta($current_user->ID, 'primestate', esc_attr( $_POST['primestate'] ) );
+    if ( !empty( $_POST['phone'] ) )
+        update_user_meta( $current_user->ID, 'phone', esc_attr( $_POST['phone'] ) );
+	if ( !empty( $_POST['description'] ) )
+        update_user_meta( $current_user->ID, 'description', esc_attr( $_POST['description'] ) );
+	if ( !empty( $_POST['twitter'] ) )
+        update_user_meta( $current_user->ID, 'twitter', esc_attr( $_POST['twitter'] ) );
+	if ( !empty( $_POST['pinterest'] ) )
+        update_user_meta( $current_user->ID, 'pinterest', esc_attr( $_POST['pinterest'] ) );
+	if ( !empty( $_POST['instagram'] ) )
+        update_user_meta( $current_user->ID, 'instagram', esc_attr( $_POST['instagram'] ) );
+	if ( !empty( $_POST['myspace'] ) )
+        update_user_meta( $current_user->ID, 'myspace', esc_attr( $_POST['myspace'] ) );					
+
+ 
+// Redirect so the page will show updated info.
+		if ( !$error ) {
+			echo '<META http-equiv="refresh" content="0;URL='.get_permalink().'">';
+		} }
+ if ( !is_user_logged_in() ) : ?>
+<div class="box error-box"> You must be logged in to edit your profile.</div>
+<?php else : if ( $error ) echo '<div class="box error-box">' . $error . '</div>'; ?>
+  <div class="entry-content">
+  <header class="entry-header">
+    <h1 class="entry-title">Edit Your Profile</h1>
+  </header>
+  <a href="<?php bloginfo( 'url' ); ?>/gallery-submit">Submit Gallery Image</a>
+  <hr />
+<form method="post" id="edituser" class="user-forms" action="<?php the_permalink(); ?>">
+<label for="primecity"><?php _e('Primary City', 'frontendprofile'); ?></label>
+  <input name="primecity" type="text" value="<?php the_author_meta( 'primecity', $current_user->id ); ?>" />
+  <hr />
+<label for="primestate"><?php _e('Primary State', 'frontendprofile'); ?></label>
+  <input name="primestate" type="text" value="<?php the_author_meta( 'primestate', $current_user->id ); ?>" />
+  <hr />
+<label for="weburl"><?php _e('Website', 'frontendprofile'); ?></label>
+  <input name="weburl" type="text" value="<?php the_author_meta( 'weburl', $current_user->id ); ?>" />
+  <hr />
+<label for="phone"><?php _e('Phone', 'frontendprofile'); ?></label>
+  <input name="phone" type="text" value="<?php the_author_meta( 'phone', $current_user->id ); ?>" />
+  <hr />
+<label for="description"><?php _e('Description', 'frontendprofile'); ?></label><br />
+  <textarea name="description" rows="5" cols="30"><?php echo the_author_meta( 'description', $current_user->id ); ?></textarea>
+  <hr />
+<label for="twitter"><?php _e('Twitter', 'frontendprofile'); ?></label>
+ <input name="twitter" type="text" value="<?php the_author_meta( 'twitter', $current_user->id ); ?>" />
+ <hr />
+<label for="pinterest"><?php _e('Pinterest', 'frontendprofile'); ?></label>
+ <input name="pinterest" type="text" value="<?php the_author_meta( 'pinterest', $current_user->id ); ?>" />
+ <hr />
+<label for="instagram"><?php _e('Instagram', 'frontendprofile'); ?></label>
+ <input name="instagram" type="text" value="<?php the_author_meta( 'instagram', $current_user->id ); ?>" />
+ <hr />
+<label for="myspace"><?php _e('MySpace', 'frontendprofile'); ?></label>
+ <input name="myspace" type="text" value="<?php the_author_meta( 'myspace', $current_user->id ); ?>" />
+ <hr />
+  <?php echo $referer; ?>
+  <input name="updateuser" type="submit" id="updateuser" class="submit button" value="<?php _e('Update', 'frontendprofile'); ?>" />
+  <?php wp_nonce_field( 'update-user' ) ?>
+  <input name="action" type="hidden" id="action" value="update-user" />
+</form>
+</div>
+<?php endif;
+?>
