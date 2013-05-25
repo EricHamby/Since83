@@ -63,13 +63,13 @@ if ( !is_user_logged_in() ) : ?>
   <form method="post" id="edituser" class="user-forms" action="<?php the_permalink(); ?>" enctype="multipart/form-data">
     <!-- UPLOAD IMAGES AREA -->
     <label><?php _e('Profile Image', 'frontendprofile'); ?></label>
-     <input type="image" name="profileimage" />
+     <input type="file" name="profileimage" />
      <hr />
     
     <label><?php _e('Rotating Banner Images', 'frontendprofile'); ?></label>
-     <input type="image" name="banners[]" />
-     <input type="image" name="banners[]" />
-     <input type="image" name="banners[]" />
+     <input type="file" name="banners[]" />
+     <input type="file" name="banners[]" />
+     <input type="file" name="banners[]" />
      <hr />
     <!-- /UPLOAD IMAGES AREA -->
     
