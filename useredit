@@ -35,7 +35,21 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
     {
       if(isset($_FILES['profileimage']))
       {
-        //Process the profile image here
+        $name = '';
+        $uploads = wp_upload_dir();
+        $name_parts = explode('.', $_FILES["profileimage"]["name"]);
+        $extension = strtolower(array_pop($name_parts));
+        
+        foreach($name_parts as $part)
+          $name .= sanitize_title($part);
+        
+        $filename = $name . '.' . $extension; //Full sanitized filename
+        $file_path = $uploads['basedir'] . '/profileimages/' . sanitize_title($current_user->user_login) . '/' . $filename;
+        $file_url = $uploads['baseurl'] . '/profileimages/' . sanitize_title($current_user->user_login) . '/' . $filename;
+        move_uploaded_file($_FILES["profileimage"]["tmp_name"], $file_path);
+        update_user_meta($current_user->ID, 'profile_image_url', $file_url);
+        //The profile image for this user can now be loaded using something like
+        /*<img src="<?php echo get_user_meta($current_user->ID, 'profile_image_url', true); ?>" width="200" />*/
       }
       
       if(isset($_FILES['banners']))
